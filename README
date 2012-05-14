@@ -1,7 +1,11 @@
 I'm just doing a little bit of wii homebrew programming.  
 
-:Compile Procedure
-You need to install devkitpro to setup your windows environment, then double clicking lesson2.pnproj should load the project with programmer's notepad (installed with devkitpro).  
-From there you should be able to press alt+1 to compile the .dol and .elf files.
-Then rename them to boot.* and copy them both over to your SD card in SD:/apps/lesson2/.  
-Once that's done you should be able to launch "lesson2" from the homebrew channel (version 1.1.0??? I though it had a 7 in it... I might have botched this mod a bit...)
+::Compile Procedure
+
+1)  You need to install devkitpro to setup your windows environment, then double clicking lesson2.pnproj should load the project with programmer's notepad (installed with devkitpro).  
+
+2)  From there you should be able to press alt+1 to compile the .dol and .elf files.
+
+3)  Then rename them to boot.* and copy them both over to your SD card in SD:/apps/lesson2/.  
+
+4)  Once that's done you should be able to launch "lesson2" from the homebrew channel (version 1.1.0??? I though it had a 7 in it... I might have botched this mod a bit...)
