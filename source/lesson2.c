@@ -28,7 +28,6 @@ int main( int argc, char **argv ){
 
 	Mtx view;
 	Mtx44 perspective;
-	Mtx model, modelview;
 
 	u32	fb = 0; 	// initial framebuffer index
 	GXColor background = {0, 0xff, 0, 0xff};
@@ -134,63 +133,22 @@ int main( int argc, char **argv ){
 				GX_SetCopyClear(background, 0x00ffffff);
 			}
 			
-			if (buttons & WPAD_BUTTON_1){   // Start or stop rendering the triangle
-				is_triangle_rendered ^= 1;
-			}
-			
-			if (buttons & WPAD_BUTTON_2){
-				is_square_rendered ^= 1;
-			}
-			
 			if (buttons & WPAD_BUTTON_DOWN){
 				printf("hello 1");
 			}
 			
 		}
-			
-
-		// do this before drawing
-		GX_SetViewport(0,0,rmode->fbWidth,rmode->efbHeight,0,1);
-
-		guMtxIdentity(model);
-		guMtxTransApply(model, model, -1.5f,0.0f,-6.0f);
-		guMtxConcat(view,model,modelview);
-		// load the modelview matrix into matrix memory
-		GX_LoadPosMtxImm(modelview, GX_PNMTX0);
 		
-		if (is_triangle_rendered){
-			GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 3);
-				GX_Position3f32( 0.0f, 1.0f, 0.0f);		// Top
-				GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
-				GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
-			GX_End();
-		}
-
-		guMtxTransApply(model, model, 3.0f,0.0f,0.0f);
-		guMtxConcat(view,model,modelview);
-		// load the modelview matrix into matrix memory
-		GX_LoadPosMtxImm(modelview, GX_PNMTX0);
-
-		if (is_square_rendered){
-			GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
-				GX_Position3f32(-1.0f, 1.0f, 0.0f);	// Top Left
-				GX_Position3f32( 1.0f, 1.0f, 0.0f);		// Top Right
-				GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
-				GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
-			GX_End();									// Done Drawing The Quad 
-		}
-
-		// do this stuff after drawing
-		GX_DrawDone();
+		printf("hello world");
 		
 		fb ^= 1;		// flip framebuffer
-		GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
-		GX_SetColorUpdate(GX_TRUE);
+		//GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+		//GX_SetColorUpdate(GX_TRUE);
 		GX_CopyDisp(frameBuffer[fb],GX_TRUE);
 
 		VIDEO_SetNextFramebuffer(frameBuffer[fb]);
  
-		VIDEO_Flush();
+		//VIDEO_Flush();
 		
 		VIDEO_WaitVSync();
 
