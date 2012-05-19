@@ -111,8 +111,34 @@ void initialize() {
     f32 h = rmode->viHeight;
 	guPerspective(perspective, 45, (f32)w/h, 0.1F, 300.0F);
 	GX_LoadProjectionMtx(perspective, GX_PERSPECTIVE);
-	
 }
+
+
+// Pass in the buttons pressed, and this function will take care of the logic
+void changeColorBasedOnButtons(int buttons){
+	if (buttons & WPAD_BUTTON_A) {
+		background = (GXColor){0, 0, 0xff, 0xff};   // make the screen blue
+	}
+	if (buttons & WPAD_BUTTON_B) {
+		background = (GXColor){0, 0xff, 0x00, 0xff};   // make the screen green
+	}
+	if (buttons & WPAD_BUTTON_1) {
+		background = (GXColor){0xff, 0x00, 0x00, 0xff};   // make the screen red
+	}
+	if (buttons & WPAD_BUTTON_RIGHT) {
+		background = (GXColor){0xff, 0xff, 0x00, 0xff};   // make the screen Yellow
+	}
+	if (buttons & WPAD_BUTTON_UP) {
+		background = (GXColor){0xff, 0xa5, 0x00, 0xff};   // make the screen ORANGE
+	}
+	if (buttons & WPAD_BUTTON_LEFT) {
+		background = (GXColor){0xff, 0xa5, 0x00, 0xff};   // make the screen ORANGE
+	}
+	if (buttons & WPAD_BUTTON_DOWN) {
+		background = (GXColor){0xff, 0xa5, 0x00, 0xff};   // make the screen ORANGE
+	}
+}
+
 
 
 //---------------------------------------------------------------------------------
@@ -133,37 +159,17 @@ int main( int argc, char **argv ){
 		if (buttons) {
 			if (buttons & WPAD_BUTTON_HOME) exit(0);
 			
-			if (buttons & WPAD_BUTTON_A) {
-				background = (GXColor){0, 0, 0xff, 0xff};   // make the screen blue
-				GX_SetCopyClear(background, 0x00ffffff);
-			}
-			if (buttons & WPAD_BUTTON_B) {
-				background = (GXColor){0, 0xff, 0x00, 0xff};   // make the screen green
-				GX_SetCopyClear(background, 0x00ffffff);
-			}
-			if (buttons & WPAD_BUTTON_1) {
-				background = (GXColor){0xff, 0x00, 0x00, 0xff};   // make the screen red
-				GX_SetCopyClear(background, 0x00ffffff);
-			}
-			if (buttons & WPAD_BUTTON_RIGHT) {
-				background = (GXColor){0xff, 0xff, 0x00, 0xff};   // make the screen Yellow
-				GX_SetCopyClear(background, 0x00ffffff);
-			}
-			if (buttons & WPAD_BUTTON_UP) {
-				background = (GXColor){0xff, 0xa5, 0x00, 0xff};   // make the screen ORANGE
-				GX_SetCopyClear(background, 0x00ffffff);
-			}
-			if (buttons & WPAD_BUTTON_LEFT) {
-				background = (GXColor){0xff, 0xa5, 0x00, 0xff};   // make the screen ORANGE
-				GX_SetCopyClear(background, 0x00ffffff);
-			}
+			changeColorBasedOnButtons(buttons);
+			
 			
 			// OMG I JUST REALIZED I SHOULD MAKE IT SO MOVING THE JOYSTICK PANS THE COLORS!!!!!
 			// THAT WOULD MAKE Q SOOOO HAPPY!!!!!
 			
+			
 			if (buttons & WPAD_BUTTON_DOWN){
 				printf("hello 1");
 			}
+			GX_SetCopyClear(background, 0x00ffffff);
 			
 		}
 		
