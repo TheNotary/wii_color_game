@@ -11,6 +11,7 @@
 #include <math.h>
 #include <gccore.h>
 #include <wiiuse/wpad.h>
+#include <../include/functions.h>
  
 #define DEFAULT_FIFO_SIZE	(256*1024)
 
@@ -21,6 +22,9 @@ GXRModeObj *rmode;
 
 u32	fb = 0; 	// initial framebuffer index
 GXColor background;
+
+
+
 
 
 void initialize() {
@@ -137,6 +141,7 @@ void changeColorBasedOnButtons(int buttons){
 	if (buttons & WPAD_BUTTON_DOWN) {
 		background = (GXColor){0xff, 0xa5, 0x00, 0xff};   // make the screen ORANGE
 	}
+	GX_SetCopyClear(background, 0x00ffffff);
 }
 
 
@@ -147,11 +152,10 @@ int main( int argc, char **argv ){
 	initialize();
 	
 	// Initialise the console, required for printf
-    console_init(frameBuffer[fb],20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
-	
-	printf("hello 1");
+    
 	
 	while(1) {
+		console_init(frameBuffer[fb],20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
 	
 		WPAD_ScanPads();
 		int buttons = WPAD_ButtonsDown(0);
@@ -165,15 +169,19 @@ int main( int argc, char **argv ){
 			// OMG I JUST REALIZED I SHOULD MAKE IT SO MOVING THE JOYSTICK PANS THE COLORS!!!!!
 			// THAT WOULD MAKE Q SOOOO HAPPY!!!!!
 			
+			//char buf[5];
+			//sprintf(buf, "%d", buttons);
+			//printf(buf);
 			
-			if (buttons & WPAD_BUTTON_DOWN){
-				printf("hello 1");
-			}
-			GX_SetCopyClear(background, 0x00ffffff);
+			printf("%s\n", byte_to_binary(buttons));
+
+			
+			
+			
 			
 		}
 		
-		printf("hello world");
+		
 		
 		fb ^= 1;		// flip framebuffer
 		//GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
@@ -190,4 +198,4 @@ int main( int argc, char **argv ){
 	}
 	return 0;
 }
- 
+

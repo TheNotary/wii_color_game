@@ -54,7 +54,8 @@ lesson2.o: \
  c:/devkitPro/libogc/include/wiiuse/wpad.h \
  c:/devkitPro/libogc/include/wiiuse/wiiuse.h \
  c:/devkitPro/libogc/include/bte/bte.h \
- c:/devkitPro/libogc/include/bte/bd_addr.h
+ c:/devkitPro/libogc/include/bte/bd_addr.h \
+ c:/archive/TECH/SCRIPT/MyScripts/wii/wii_color_game/build/../include/functions.h
 
 c:/devkitPro/libogc/include/gccore.h:
 
@@ -165,3 +166,5 @@ c:/devkitPro/libogc/include/wiiuse/wiiuse.h:
 c:/devkitPro/libogc/include/bte/bte.h:
 
 c:/devkitPro/libogc/include/bte/bd_addr.h:
+
+c:/archive/TECH/SCRIPT/MyScripts/wii/wii_color_game/build/../include/functions.h:
