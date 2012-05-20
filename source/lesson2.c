@@ -23,6 +23,8 @@ GXRModeObj *rmode;
 u32	fb = 0; 	// initial framebuffer index
 GXColor background;
 
+int joy_x;
+int joy_y;
 
 
 
@@ -144,11 +146,29 @@ void changeColorBasedOnButtons(int buttons){
 	GX_SetCopyClear(background, 0x00ffffff);
 }
 
+void changeColorBasedOnJoystick(int buttons){
+	struct expansion_t data;
+	WPAD_Expansion(WPAD_CHAN_0, &data); // Get expansion info from the first wiimote
+	
+	
+	joy_x = data.nunchuk.js.pos.x - 128;
+	joy_y = data.nunchuk.js.pos.y - 128;
+	
+	if (data.type == WPAD_EXP_NUNCHUK) { // Ensure there's a nunchuk
+		printf("Nunchuk X: %d\n Nunchuk Y: %d\n", joy_x, joy_y);
+	}
+	
+	
+	
+	background = (GXColor){if_positive_be_zero(joy_y) + if_negative_be_zero(joy_x), if_positive_be_zero(joy_x) + if_negative_be_zero(joy_y), joy_x, 0xff};
+	
+	GX_SetCopyClear(background, 0x00ffffff);
+}
 
 
-//---------------------------------------------------------------------------------
-int main( int argc, char **argv ){
-//---------------------------------------------------------------------------------
+ //---------------------------------------------------------------------------------
+int main( int argc, char **argv )
+{//---------------------------------------------------------------------------------
 	initialize();
 	
 	// Initialise the console, required for printf
@@ -158,6 +178,7 @@ int main( int argc, char **argv ){
 		console_init(frameBuffer[fb],20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
 	
 		WPAD_ScanPads();
+		
 		int buttons = WPAD_ButtonsDown(0);
 
 		if (buttons) {
@@ -166,8 +187,7 @@ int main( int argc, char **argv ){
 			changeColorBasedOnButtons(buttons);
 			
 			
-			// OMG I JUST REALIZED I SHOULD MAKE IT SO MOVING THE JOYSTICK PANS THE COLORS!!!!!
-			// THAT WOULD MAKE Q SOOOO HAPPY!!!!!
+			
 			
 			//char buf[5];
 			//sprintf(buf, "%d", buttons);
@@ -176,13 +196,17 @@ int main( int argc, char **argv ){
 			char buf[255];
 			byte_to_binary(buf, buttons);
 			
-			// printf("%s\n", buf);
-
-			
-			
-			
-			
+			printf("%s\n", buf);
 		}
+		
+		changeColorBasedOnJoystick(buttons);
+		// OMG I JUST REALIZED I SHOULD MAKE IT SO MOVING THE JOYSTICK PANS THE COLORS!!!!!
+		// THAT WOULD MAKE Q SOOOO HAPPY!!!!!
+		
+		
+		
+		
+		
 		
 		
 		
