@@ -157,7 +157,7 @@ void changeColorBasedOnJoystick(int buttons){
 	if (data.type == WPAD_EXP_NUNCHUK) { // Ensure there's a nunchuk
 		printf("Nunchuk X: %d\n Nunchuk Y: %d\n", joy_x, joy_y);
 	}
-	
+	 
 	
 	
 	background = (GXColor){if_positive_be_zero(joy_y) + if_negative_be_zero(joy_x), if_positive_be_zero(joy_x) + if_negative_be_zero(joy_y), joy_x, 0xff};
