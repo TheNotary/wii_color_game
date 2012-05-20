@@ -3,7 +3,7 @@
 
 
 
-const char *byte_to_binary(int x);
+void byte_to_binary(char buf[], int x);
 
 
 

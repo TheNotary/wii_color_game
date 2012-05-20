@@ -173,7 +173,10 @@ int main( int argc, char **argv ){
 			//sprintf(buf, "%d", buttons);
 			//printf(buf);
 			
-			printf("%s\n", byte_to_binary(buttons));
+			char buf[255];
+			byte_to_binary(buf, buttons);
+			
+			printf("%s\n", buf);
 
 			
 			

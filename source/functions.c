@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <../include/functions.h>
+//#include <../include/functions.h>
 
+// used by Byte_to_binary
 // this get's n, in the equation 2^n = integer
 int get_n(int x){    // assume 16
 	int n = 0;
@@ -17,22 +18,31 @@ int get_n(int x){    // assume 16
 	return n-1;
 }
 
-
-const char *byte_to_binary(int x)
+int get_n_mathy(int x)
 {
-	char buf[5];
-	sprintf(buf, "%d", x);
-	printf(buf);
 	
-	// int MAX_VALUE = length_of_x(x);   //  (4 - (n % 4)) + n
+	return (int)floor(log(x) / log(2)) + 1;
+}
+
+
+void addSpacesToString(char output[], int startingLength)
+{
+	
+}
+
+
+
+void byte_to_binary(char buf[], int x)
+{
 	int MAX_VALUE = get_n(x)+1;
 	
 	int startingZ = (int)pow(2, MAX_VALUE) >> 1;     // take 2^MAX_VALUE and then bit shift it right once
 	
-	sprintf(buf, "%d", MAX_VALUE);
-	printf(buf);
-	sprintf(buf, "%d", startingZ);
-	printf(buf);
+	int numberOfBitsToOutput = (4 - (MAX_VALUE % 4)) + MAX_VALUE; //  (4 - (n % 4)) + n
+	
+	sprintf(buf, "%d", numberOfBitsToOutput);
+	//printf(buf);
+	
 	
 	
     char b[MAX_VALUE];   // was 9 and was a static char...
@@ -43,8 +53,11 @@ const char *byte_to_binary(int x)
     {                                           //   then it shifts to the next smallest bit... 128
         strcat(b, ((x & z) == z) ? "1" : "0");
     }
+	
+	char prettyString[20];
+	
+	addSpacesToString(prettyString, numberOfBitsToOutput);
 
-    return b;
 }
 
 
