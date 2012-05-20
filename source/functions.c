@@ -76,18 +76,19 @@ void addMissingBitsToMakeFour(char io[], int numberOfBitsToOutput)
 
 void byte_to_binary(char buf[], int x)
 {
-	int MAX_VALUE = get_n(x)+1;
+	int n = get_n(x);
+	int flat_int = n+1;
 	
-	int startingZ = (int)pow(2, MAX_VALUE) >> 1;     // take 2^MAX_VALUE and then bit shift it right once
+	int startingZ = (int)pow(2, flat_int) >> 1;     // take 2^MAX_VALUE and then bit shift it right once
 	
-	int numberOfBitsToOutput = (4 - (MAX_VALUE % 4)) + MAX_VALUE; //  (4 - (n % 4)) + n
+	int numberOfBitsToOutput = (4 - (n % 4)) + n; //  (4 - (n % 4)) + n
 	
 	sprintf(buf, "%d", numberOfBitsToOutput);
-	//printf(buf);
+	printf(buf);
 	
 	
 	
-    char b[MAX_VALUE];   // was 9 and was a static char...
+    char b[flat_int];   // was 9 and was a static char...
     b[0] = '\0';
 
     int z;
