@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 //#include <../include/functions.h>
 
@@ -27,7 +28,48 @@ int get_n_mathy(int x)
 
 void addSpacesToString(char output[], int startingLength)
 {
+	// printf("%d", startingLength);
 	
+	
+	int make_room_at = 4;
+	int room_to_make = 1;
+
+	memmove(
+		output + make_room_at + room_to_make,
+		output + make_room_at,
+		15 - (make_room_at + room_to_make)
+	);
+	
+	output[make_room_at] = ' ';
+}
+
+void addMissingBitsToMakeFour(char io[], int numberOfBitsToOutput)
+{
+	int lengthOfString = strlen(io);
+	char buf[10];
+	
+	sprintf(buf, "%d", lengthOfString);
+	printf(buf);
+	
+	sprintf(buf, "%d", numberOfBitsToOutput);
+	printf(buf);
+	
+	if (lengthOfString < numberOfBitsToOutput)
+	{
+		int count = numberOfBitsToOutput - lengthOfString;
+		
+		memmove(
+			io + 0 + count,
+			io + 0,
+			15 - (0 + count)
+		);
+		
+		int i;
+		for (i = 0; i < count; i++)
+		{
+			io[i] = '0';
+		}
+	}
 }
 
 
@@ -54,10 +96,15 @@ void byte_to_binary(char buf[], int x)
         strcat(b, ((x & z) == z) ? "1" : "0");
     }
 	
-	char prettyString[20];
+	//
 	
-	addSpacesToString(prettyString, numberOfBitsToOutput);
-
+	addMissingBitsToMakeFour(b, numberOfBitsToOutput);
+	
+	
+	//addSpacesToString(b, numberOfBitsToOutput);
+	
+	printf(b);
+	strcpy(buf, b);
 }
 
 

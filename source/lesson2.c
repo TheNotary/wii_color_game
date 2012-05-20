@@ -176,7 +176,7 @@ int main( int argc, char **argv ){
 			char buf[255];
 			byte_to_binary(buf, buttons);
 			
-			printf("%s\n", buf);
+			// printf("%s\n", buf);
 
 			
 			
