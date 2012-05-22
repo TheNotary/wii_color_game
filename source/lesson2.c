@@ -15,6 +15,10 @@
  
 #define DEFAULT_FIFO_SIZE	(256*1024)
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 
 
 static void *frameBuffer[2] = { NULL, NULL};
@@ -146,23 +150,44 @@ void changeColorBasedOnButtons(int buttons){
 	GX_SetCopyClear(background, 0x00ffffff);
 }
 
-void changeColorBasedOnJoystick(int buttons){
+void changeColorBasedOnJoystick(){
 	struct expansion_t data;
 	WPAD_Expansion(WPAD_CHAN_0, &data); // Get expansion info from the first wiimote
 	
 	
+	int old_x = joy_x;
+	int old_y = joy_y;
+	
 	joy_x = data.nunchuk.js.pos.x - 128;
 	joy_y = data.nunchuk.js.pos.y - 128;
 	
-	if (data.type == WPAD_EXP_NUNCHUK) { // Ensure there's a nunchuk
-		printf("Nunchuk X: %d\n Nunchuk Y: %d\n", joy_x, joy_y);
+	/*
+	background = (GXColor){     // set the background color
+		if_positive_be_zero(joy_y) + if_negative_be_zero(joy_x), 
+		if_positive_be_zero(joy_x) + if_negative_be_zero(joy_y), 
+		if_negative_be_zero(joy_x) + if_negative_be_zero(joy_y), 
+		0xff};
+	*/
+	
+	int delta = 2;
+	if (old_x - joy_x < delta || old_x - joy_x > -1*delta || old_y - joy_y < delta || old_y - joy_y > -1*delta){
+		//GX_SetCopyClear(background, 0x00ffffff);     // change the background color to whatever it's been changed to
 	}
-	 
 	
 	
-	background = (GXColor){if_positive_be_zero(joy_y) + if_negative_be_zero(joy_x), if_positive_be_zero(joy_x) + if_negative_be_zero(joy_y), joy_x, 0xff};
+	double degrees;
+	degrees = convertJoyToDegrees(joy_x, joy_y);
 	
-	GX_SetCopyClear(background, 0x00ffffff);
+	
+	
+	
+	//if (degrees != -1){
+		background = setBackgroundBasedOnDegrees(background, degrees);
+		GX_SetCopyClear(background, 0x00ffffff);
+		printf("%f", degrees);
+	//}
+	
+	
 }
 
 
@@ -172,11 +197,9 @@ int main( int argc, char **argv )
 	initialize();
 	
 	// Initialise the console, required for printf
-    
+    console_init(frameBuffer[fb],20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
 	
 	while(1) {
-		console_init(frameBuffer[fb],20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
-	
 		WPAD_ScanPads();
 		
 		int buttons = WPAD_ButtonsDown(0);
@@ -184,7 +207,7 @@ int main( int argc, char **argv )
 		if (buttons) {
 			if (buttons & WPAD_BUTTON_HOME) exit(0);
 			
-			changeColorBasedOnButtons(buttons);
+			//changeColorBasedOnButtons(buttons);
 			
 			
 			
@@ -199,9 +222,7 @@ int main( int argc, char **argv )
 			printf("%s\n", buf);
 		}
 		
-		changeColorBasedOnJoystick(buttons);
-		// OMG I JUST REALIZED I SHOULD MAKE IT SO MOVING THE JOYSTICK PANS THE COLORS!!!!!
-		// THAT WOULD MAKE Q SOOOO HAPPY!!!!!
+		changeColorBasedOnJoystick();
 		
 		
 		

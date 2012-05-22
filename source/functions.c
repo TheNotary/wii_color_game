@@ -3,7 +3,14 @@
 #include <math.h>
 #include <string.h>
 
-//#include <../include/functions.h>
+#include <gccore.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+
+
 
 
 // used by Byte_to_binary
@@ -110,3 +117,161 @@ int if_positive_be_zero(int x){
 }
 
 
+
+double convertJoyToDegrees(int joy_x, int joy_y){
+	int delta = 5;
+	if ( (joy_x < delta && joy_x > -delta) && (joy_y < delta && joy_y > -delta) ){   // if we're in the deadzone...
+		return -1.0;
+	}
+	
+	double degrees = atan2(joy_x, joy_y) * 180 / M_PI;             // convert joystick input to degrees
+	
+	if (degrees < 0){ // correct negatives as parts of the whole 360 degree spectrum...
+		degrees = 360 + degrees;
+	}
+	return degrees;
+}
+
+
+
+
+
+GXColor calculateColorForRegion(int red, int green, int blue,
+									int startingOffset, int regionSize,
+									int redDif, int greenDif, int blueDif, int degrees){
+	GXColor bg;
+	//red = 0x00;
+	//green = 0x00;
+	//blue = 0xff;
+	
+	//startingOffset = 0;
+	double degreesThroughRegion = degrees - startingOffset;
+	double percentageThroughRegion = degreesThroughRegion / regionSize;
+	
+	/*
+	redDif = 0;
+	greenDif = 255;
+	blueDif = -127;
+	*/
+	
+	red   += redDif   * percentageThroughRegion;
+	green += greenDif * percentageThroughRegion;
+	blue  += blueDif  * percentageThroughRegion;
+	
+	printf("the color is %d, %d, %d", red, green, blue);
+	bg = (GXColor){red,green,blue,0xff};
+	return bg;
+}
+
+
+
+
+// the color wheel has 12 base colors, and this code allows the joystick to be mapped to 
+// some gradient between those colors or one of those base colors themselves
+GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
+	static GXColor bg;
+	int red = 0;
+	int green = 0;
+	int blue = 0;
+	
+	double startingOffset = 0;
+	double degreesThroughRegion;
+	int regionSize; // degrees...
+	double percentageThroughRegion = 0;
+	
+	int redDif = 0;    // the delta on each color for the region
+	int greenDif = 0;
+	int blueDif = 0;
+	
+	
+	
+	// From solid blue to a blue green... 30 degrees... special case
+	// base is (0,0,ff) -> (0,ff,7f)
+	bool isRegion1 = (degrees >= 0 && degrees < 30);
+	bool isRegion2 = (degrees >= 30 && degrees < 60);   // blue-green to green 30deg
+	bool isRegion3 = (degrees >= 60 && degrees < 120);  // green to yellow 60deg
+	bool isRegion4 = (degrees >= 120 && degrees < 240); // from yellow all the way to red... in picture
+	bool isRegion5 = (degrees >= 240 && degrees < 300);
+	bool isRegion6 = (degrees >= 300 && degrees < 360);
+	
+	
+	if (isRegion1){
+		printf("region1");
+		red = 0x00;
+		green = 0x00;
+		blue = 0xff;
+		startingOffset = 0;
+		degreesThroughRegion = degrees - startingOffset;
+		regionSize = 30;
+		percentageThroughRegion = degreesThroughRegion / regionSize;
+		
+		redDif = 0;
+		greenDif = 255;
+		blueDif = -127;
+		
+		red  += redDif*percentageThroughRegion;
+		green += greenDif*percentageThroughRegion;
+		blue += blueDif*percentageThroughRegion;
+		
+		printf("the color is %d, %d, %d", red, green, blue);
+		bg = (GXColor){red,green,blue,0xff};
+	}
+	
+	else if (isRegion2){
+		printf("reg2");
+		red = 0x00;
+		green = 0xff;
+		blue = 0x7f;
+		startingOffset = 30;
+		
+		degreesThroughRegion = degrees - startingOffset;
+		regionSize = 30;
+		percentageThroughRegion = degreesThroughRegion / regionSize;
+		
+		redDif = 0;
+		greenDif = 0;
+		blueDif = -127;
+		
+		red  += redDif*percentageThroughRegion;
+		green += greenDif*percentageThroughRegion;
+		blue += blueDif*percentageThroughRegion;
+		
+		printf("the color is %d, %d, %d", red, green, blue);
+		bg = (GXColor){red,green,blue,0xff};
+	}
+	else if (isRegion3){
+		printf("region3");
+		red = 0x00;
+		green = 0xff;
+		blue = 0x00;
+		startingOffset = 60;
+		degreesThroughRegion = degrees - startingOffset;
+		regionSize = 60;
+		percentageThroughRegion = degreesThroughRegion / regionSize;
+		
+		redDif = 255;
+		greenDif = 0;
+		blueDif = 0;
+		
+		red  += redDif*percentageThroughRegion;
+		green += greenDif*percentageThroughRegion;
+		blue += blueDif*percentageThroughRegion;
+		
+		printf("the color is %d, %d, %d", red, green, blue);
+		bg = (GXColor){red,green,blue,0xff};
+	}
+	else if (isRegion4){
+		printf("reg4");
+		bg = calculateColorForRegion(0xff, 0xff, 0, 120, 120, 0, -255, 0, degrees); 
+	}
+	else if (isRegion5){
+		
+	}
+	
+	
+	
+	
+	//background = (GXColor){red, green, blue, 0xff};
+	
+	return bg;
+}
