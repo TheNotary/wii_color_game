@@ -157,15 +157,11 @@ void changeColorBasedOnJoystick(){
 	struct expansion_t data;
 	WPAD_Expansion(WPAD_CHAN_0, &data); // Get expansion info from the first wiimote
 	
-	
-	
-	
-	
-	
 	joy_x = data.nunchuk.js.pos.x - 128;
 	joy_y = data.nunchuk.js.pos.y - 128;
 	
-	if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
+	//if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
+	if (true){
 		old_x = joy_x;
 		old_y = joy_y;
 		
@@ -200,28 +196,11 @@ int main( int argc, char **argv )
 			
 			changeColorBasedOnButtons(buttons);
 			
-			
-			
-			
-			//char buf[5];
-			//sprintf(buf, "%d", buttons);
-			//printf(buf);
-			
-			char buf[255];
-			byte_to_binary(buf, buttons);
-			
-			// printf("%s\n", buf);
+			//char buf[255];
+			//byte_to_binary(buf, buttons);
 		}
 		
-		
 		changeColorBasedOnJoystick();
-		
-		
-		
-		
-		
-		
-		
 		
 		fb ^= 1;		// flip framebuffer
 		//GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);

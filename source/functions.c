@@ -151,18 +151,15 @@ GXColor calculateColorForRegion(int red, int green, int blue,
 	//startingOffset = 0;
 	double degreesThroughRegion = degrees - startingOffset;
 	double percentageThroughRegion = degreesThroughRegion / regionSize;
-	
 	/*
 	redDif = 0;
 	greenDif = 255;
 	blueDif = -127;
 	*/
-	
 	red   += redDif   * percentageThroughRegion;
 	green += greenDif * percentageThroughRegion;
 	blue  += blueDif  * percentageThroughRegion;
 	
-	printf("the color is %d, %d, %d", red, green, blue);
 	bg = (GXColor){red,green,blue,0xff};
 	return bg;
 }
@@ -177,6 +174,7 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 	
 	// From solid blue to a blue green... 30 degrees... special case
 	// base is (0,0,ff) -> (0,ff,7f)
+	// refer to:  http://processingjs.org/learning/basic/colorwheel/
 	bool isRegion1 = (degrees >= 0 && degrees < 30);
 	bool isRegion2 = (degrees >= 30 && degrees < 60);   // blue-green to green 30deg
 	bool isRegion3 = (degrees >= 60 && degrees < 120);  // green to yellow 60deg
@@ -203,17 +201,23 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 		bg = calculateColorForRegion(255,0,255,300,60, -255,0,0,degrees);
 	}
 	
+	background = bg;
 	return bg;
 }
 
 
-
+int abs(int x){
+	if(x < 0){
+		return -x;
+	}
+	return x;
+}
 
 
 bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y)
 {
-	int delta = 2;
-	if (old_x - joy_x < delta || old_x - joy_x > -1*delta || old_y - joy_y < delta || old_y - joy_y > -1*delta){
+	int delta = 15;
+	if (abs(old_x - joy_x) > delta || abs(old_y - joy_y) > delta){ 
 		return true;
 	}
 	
