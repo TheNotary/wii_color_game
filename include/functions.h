@@ -10,5 +10,6 @@ int if_positive_be_zero(int x);
 
 double convertJoyToDegrees(int joy_x, int joy_y);
 GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees);
-//void setBackgroundBasedOnDegrees(GXColor background, double degrees);
+
+bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y);
 #endif

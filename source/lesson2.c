@@ -30,6 +30,9 @@ GXColor background;
 int joy_x;
 int joy_y;
 
+int old_x;  // for deadzone detection
+int old_y;  
+
 
 
 
@@ -155,38 +158,26 @@ void changeColorBasedOnJoystick(){
 	WPAD_Expansion(WPAD_CHAN_0, &data); // Get expansion info from the first wiimote
 	
 	
-	int old_x = joy_x;
-	int old_y = joy_y;
+	
+	
+	
 	
 	joy_x = data.nunchuk.js.pos.x - 128;
 	joy_y = data.nunchuk.js.pos.y - 128;
 	
-	/*
-	background = (GXColor){     // set the background color
-		if_positive_be_zero(joy_y) + if_negative_be_zero(joy_x), 
-		if_positive_be_zero(joy_x) + if_negative_be_zero(joy_y), 
-		if_negative_be_zero(joy_x) + if_negative_be_zero(joy_y), 
-		0xff};
-	*/
-	
-	int delta = 2;
-	if (old_x - joy_x < delta || old_x - joy_x > -1*delta || old_y - joy_y < delta || old_y - joy_y > -1*delta){
-		//GX_SetCopyClear(background, 0x00ffffff);     // change the background color to whatever it's been changed to
+	if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
+		old_x = joy_x;
+		old_y = joy_y;
+		
+		double degrees;
+		degrees = convertJoyToDegrees(joy_x, joy_y);
+		
+		if (degrees != -1){
+			background = setBackgroundBasedOnDegrees(background, degrees);
+			GX_SetCopyClear(background, 0x00ffffff);
+			//printf("%f", degrees);
+		}
 	}
-	
-	
-	double degrees;
-	degrees = convertJoyToDegrees(joy_x, joy_y);
-	
-	
-	
-	
-	//if (degrees != -1){
-		background = setBackgroundBasedOnDegrees(background, degrees);
-		GX_SetCopyClear(background, 0x00ffffff);
-		printf("%f", degrees);
-	//}
-	
 	
 }
 
@@ -207,7 +198,7 @@ int main( int argc, char **argv )
 		if (buttons) {
 			if (buttons & WPAD_BUTTON_HOME) exit(0);
 			
-			//changeColorBasedOnButtons(buttons);
+			changeColorBasedOnButtons(buttons);
 			
 			
 			
@@ -219,8 +210,9 @@ int main( int argc, char **argv )
 			char buf[255];
 			byte_to_binary(buf, buttons);
 			
-			printf("%s\n", buf);
+			// printf("%s\n", buf);
 		}
+		
 		
 		changeColorBasedOnJoystick();
 		

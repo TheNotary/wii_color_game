@@ -135,7 +135,11 @@ double convertJoyToDegrees(int joy_x, int joy_y){
 
 
 
-
+// params are...
+//   starting colors(3)
+//   Starting offset, regionSize
+//   Color Deltas for region (3)
+//   degrees of joystick position.
 GXColor calculateColorForRegion(int red, int green, int blue,
 									int startingOffset, int regionSize,
 									int redDif, int greenDif, int blueDif, int degrees){
@@ -170,20 +174,6 @@ GXColor calculateColorForRegion(int red, int green, int blue,
 // some gradient between those colors or one of those base colors themselves
 GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 	static GXColor bg;
-	int red = 0;
-	int green = 0;
-	int blue = 0;
-	
-	double startingOffset = 0;
-	double degreesThroughRegion;
-	int regionSize; // degrees...
-	double percentageThroughRegion = 0;
-	
-	int redDif = 0;    // the delta on each color for the region
-	int greenDif = 0;
-	int blueDif = 0;
-	
-	
 	
 	// From solid blue to a blue green... 30 degrees... special case
 	// base is (0,0,ff) -> (0,ff,7f)
@@ -194,84 +184,38 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 	bool isRegion5 = (degrees >= 240 && degrees < 300);
 	bool isRegion6 = (degrees >= 300 && degrees < 360);
 	
-	
 	if (isRegion1){
-		printf("region1");
-		red = 0x00;
-		green = 0x00;
-		blue = 0xff;
-		startingOffset = 0;
-		degreesThroughRegion = degrees - startingOffset;
-		regionSize = 30;
-		percentageThroughRegion = degreesThroughRegion / regionSize;
-		
-		redDif = 0;
-		greenDif = 255;
-		blueDif = -127;
-		
-		red  += redDif*percentageThroughRegion;
-		green += greenDif*percentageThroughRegion;
-		blue += blueDif*percentageThroughRegion;
-		
-		printf("the color is %d, %d, %d", red, green, blue);
-		bg = (GXColor){red,green,blue,0xff};
+		bg = calculateColorForRegion(0,0,255,0,30,0,255,-127,degrees);
 	}
-	
 	else if (isRegion2){
-		printf("reg2");
-		red = 0x00;
-		green = 0xff;
-		blue = 0x7f;
-		startingOffset = 30;
-		
-		degreesThroughRegion = degrees - startingOffset;
-		regionSize = 30;
-		percentageThroughRegion = degreesThroughRegion / regionSize;
-		
-		redDif = 0;
-		greenDif = 0;
-		blueDif = -127;
-		
-		red  += redDif*percentageThroughRegion;
-		green += greenDif*percentageThroughRegion;
-		blue += blueDif*percentageThroughRegion;
-		
-		printf("the color is %d, %d, %d", red, green, blue);
-		bg = (GXColor){red,green,blue,0xff};
+		bg = calculateColorForRegion(0,255,127,30,30,0,0,-127,degrees);
 	}
 	else if (isRegion3){
-		printf("region3");
-		red = 0x00;
-		green = 0xff;
-		blue = 0x00;
-		startingOffset = 60;
-		degreesThroughRegion = degrees - startingOffset;
-		regionSize = 60;
-		percentageThroughRegion = degreesThroughRegion / regionSize;
-		
-		redDif = 255;
-		greenDif = 0;
-		blueDif = 0;
-		
-		red  += redDif*percentageThroughRegion;
-		green += greenDif*percentageThroughRegion;
-		blue += blueDif*percentageThroughRegion;
-		
-		printf("the color is %d, %d, %d", red, green, blue);
-		bg = (GXColor){red,green,blue,0xff};
+		bg = calculateColorForRegion(0,255,0,60,60,255,0,0,degrees);
 	}
 	else if (isRegion4){
-		printf("reg4");
 		bg = calculateColorForRegion(0xff, 0xff, 0, 120, 120, 0, -255, 0, degrees); 
 	}
 	else if (isRegion5){
-		
+		bg = calculateColorForRegion(255,0,0,240,60,0,0,255,degrees);
+	}
+	else if (isRegion6){
+		bg = calculateColorForRegion(255,0,255,300,60, -255,0,0,degrees);
 	}
 	
-	
-	
-	
-	//background = (GXColor){red, green, blue, 0xff};
-	
 	return bg;
+}
+
+
+
+
+
+bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y)
+{
+	int delta = 2;
+	if (old_x - joy_x < delta || old_x - joy_x > -1*delta || old_y - joy_y < delta || old_y - joy_y > -1*delta){
+		return true;
+	}
+	
+	return false;
 }
