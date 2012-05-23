@@ -1,6 +1,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+	#define max( a, b ) ( ((a) > (b)) ? (a) : (b) )
+
+
+	#define min( a, b ) ( ((a) < (b)) ? (a) : (b) )
+
 #include <string.h>
 
 #include <gccore.h>
@@ -138,7 +143,7 @@ double convertJoyToDegrees(int joy_x, int joy_y){
 // params are...
 //   starting colors(3)
 //   Starting offset, regionSize
-//   Color Deltas for region (3)
+//   Color Deltas for region's sweep (3)
 //   degrees of joystick position.
 GXColor calculateColorForRegion(int red, int green, int blue,
 									int startingOffset, int regionSize,
@@ -183,16 +188,16 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 	bool isRegion6 = (degrees >= 300 && degrees < 360);
 	
 	if (isRegion1){
-		bg = calculateColorForRegion(0,0,255,0,30,0,255,-127,degrees);
+		bg = calculateColorForRegion(0,0,255,0,30,0,225,0,degrees);
 	}
 	else if (isRegion2){
-		bg = calculateColorForRegion(0,255,127,30,30,0,0,-127,degrees);
+		bg = calculateColorForRegion(0,225,255,30,30,0,30,-255,degrees);
 	}
 	else if (isRegion3){
 		bg = calculateColorForRegion(0,255,0,60,60,255,0,0,degrees);
 	}
 	else if (isRegion4){
-		bg = calculateColorForRegion(0xff, 0xff, 0, 120, 120, 0, -255, 0, degrees); 
+		bg = calculateColorForRegion(255, 255, 0, 120, 120, 0, -255, 0, degrees); 
 	}
 	else if (isRegion5){
 		bg = calculateColorForRegion(255,0,0,240,60,0,0,255,degrees);
@@ -220,6 +225,152 @@ bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y)
 	if (abs(old_x - joy_x) > delta || abs(old_y - joy_y) > delta){ 
 		return true;
 	}
-	
 	return false;
 }
+
+
+
+
+
+void RGBToHSV(unsigned char cr, unsigned char cg, unsigned char cb,double *ph,double *ps,double *pv)
+{
+	double r,g,b;
+	double max, min, delta;
+
+	/* convert RGB to [0,1] */
+
+	r = (double)cr/255.0f;
+	g = (double)cg/255.0f;
+	b = (double)cb/255.0f;
+
+	max = max(r,(max(g,b)));
+	min = min(r,(min(g,b)));
+
+	pv[0] = max;
+
+	/* Calculate saturation */
+
+	if (max != 0.0)
+			ps[0] = (max-min)/max;
+	else
+			ps[0] = 0.0; 
+
+	if (ps[0] == 0.0)
+	{
+			ph[0] = 0.0f;   //UNDEFINED;
+			return;
+	}
+	/* chromatic case: Saturation is not 0, so determine hue */
+	delta = max-min;
+
+	if (r==max)
+	{
+			ph[0] = (g-b)/delta;
+	}
+	else if (g==max)
+	{
+			ph[0] = 2.0 + (b-r)/delta;
+	}
+	else if (b==max)
+	{
+			ph[0] = 4.0 + (r-g)/delta;
+	}
+	ph[0] = ph[0] * 60.0;
+	if (ph[0] < 0.0)
+        ph[0] += 360.0;
+}
+
+void HSVToRGB(double h,double s,double v,unsigned char *pr,unsigned char *pg,unsigned char *pb)
+{
+	int i;
+	double f, p, q, t;
+	double r,g,b;
+
+	if( s == 0 )
+	{
+			// achromatic (grey)
+			r = g = b = v;
+	}
+	else
+	{
+			h /= 60;                        // sector 0 to 5
+			i = (int)floor( h );
+			f = h - i;                      // factorial part of h
+			p = v * ( 1 - s );
+			q = v * ( 1 - s * f );
+			t = v * ( 1 - s * ( 1 - f ) );
+			switch( i )
+			{
+			case 0:
+					r = v;
+					g = t;
+					b = p;
+			break;
+			case 1:
+					r = q;
+					g = v;
+					b = p;
+			break;
+			case 2:
+					r = p;
+					g = v;
+					b = t;
+			break;
+			case 3:
+					r = p;
+					g = q;
+					b = v;
+			break;
+			case 4:
+					r = t;
+					g = p;
+					b = v;
+			break;
+			default:                // case 5:
+					r = v;
+					g = p;
+					b = q;
+			break;
+			}
+	}
+	r*=255;
+	g*=255;
+	b*=255;
+
+	pr[0]=(unsigned char)r;
+	pg[0]=(unsigned char)g;
+	pb[0]=(unsigned char)b;
+}
+
+
+
+double getDistanceOfJoystickFromOrigin(int joy_x, int joy_y){
+	double result = sqrt(pow(joy_x, 2) + pow(joy_y, 2));
+	if (result > 127){
+		return 127;
+	}
+	return result;
+}
+
+
+GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y){
+	double dist = getDistanceOfJoystickFromOrigin(joy_x, joy_y);
+	double darknessMult = abs((int)(dist/127));
+	
+	
+	//printf(" ");
+	//int calc = (int)(background.r * darknessMult);
+	//printf("%d", calc);
+	//int count = 60;
+	//while(count--) VIDEO_WaitVSync();
+	
+	
+	background = (GXColor){(int)(background.r * darknessMult), 
+							(int)(background.g * darknessMult), 
+							(int)(background.b * darknessMult), 
+							0xff};
+	return background;
+}
+
+
+

@@ -170,8 +170,8 @@ void changeColorBasedOnJoystick(){
 		
 		if (degrees != -1){
 			background = setBackgroundBasedOnDegrees(background, degrees);
+			//background = darkenBackgroundBasedOnDistance(background, joy_x, joy_y);
 			GX_SetCopyClear(background, 0x00ffffff);
-			//printf("%f", degrees);
 		}
 	}
 	
