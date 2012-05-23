@@ -160,6 +160,15 @@ void changeColorBasedOnJoystick(){
 	joy_x = data.nunchuk.js.pos.x - 128;
 	joy_y = data.nunchuk.js.pos.y - 128;
 	
+	if (inDeadzone(joy_x, joy_y))
+		return;
+	
+	
+	printf("Joy:  %d, %d  ", joy_x, joy_y);
+	int count = 60;
+	while(count--) VIDEO_WaitVSync();
+	
+	
 	//if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
 	if (true){
 		old_x = joy_x;
@@ -200,6 +209,7 @@ int main( int argc, char **argv )
 			//byte_to_binary(buf, buttons);
 		}
 		
+		
 		changeColorBasedOnJoystick();
 		
 		fb ^= 1;		// flip framebuffer
@@ -208,12 +218,11 @@ int main( int argc, char **argv )
 		GX_CopyDisp(frameBuffer[fb],GX_TRUE);
 
 		VIDEO_SetNextFramebuffer(frameBuffer[fb]);
- 
+
 		//VIDEO_Flush();
 		
 		VIDEO_WaitVSync();
-
-
+		
 	}
 	return 0;
 }

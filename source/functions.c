@@ -360,9 +360,9 @@ GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y
 	
 	//printf(" ");
 	//int calc = (int)(background.r * darknessMult);
-	//printf("%d", calc);
-	//int count = 60;
-	//while(count--) VIDEO_WaitVSync();
+	printf("Joy:  %d, %d  ", joy_x, joy_y);
+	int count = 60;
+	while(count--) VIDEO_WaitVSync();
 	
 	
 	background = (GXColor){(int)(background.r * darknessMult), 
@@ -373,4 +373,10 @@ GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y
 }
 
 
+
+bool inDeadzone(int joy_x, int joy_y){
+	if (abs(joy_x) < 10 && abs(joy_y) < 10)
+		return true;
+	return false;
+}
 
