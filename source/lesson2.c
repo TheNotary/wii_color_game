@@ -178,9 +178,17 @@ void changeColorBasedOnJoystick(){
 		degrees = convertJoyToDegrees(joy_x, joy_y);
 		
 		if (degrees != -1){
-			background = setBackgroundBasedOnDegrees(background, degrees);
-			background = darkenBackgroundBasedOnDistance(background, joy_x, joy_y);
+			GXColor careful_bg1;
+			//careful_bg1 = malloc(255);
+			
+			careful_bg1 = setBackgroundBasedOnDegrees(background, degrees);
+			background = careful_bg1;
+			GXColor careful_bg2;
+			careful_bg2 = darkenBackgroundBasedOnDistance(background, joy_x, joy_y);
+			background = careful_bg2;
 			GX_SetCopyClear(background, 0x00ffffff);
+			
+			//free(careful_bg1);
 		}
 	}
 	
