@@ -221,10 +221,10 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 		bg = calculateColorForRegion(255,0,0,     180,45,   0,165,153,    degrees);
 	}
 	else if (isRegion6){ // pink-sammon
-		bg = calculateColorForRegion(255,165,153,   225,45, 0,-12,102,    degrees);
+		bg = calculateColorForRegion(255,165,153,   225,45, 0,0,102,    degrees);
 	}
 	else if (isRegion7){ // pink
-		bg = calculateColorForRegion(255,153,255,   270,45, -95,-153,-55,    degrees);
+		bg = calculateColorForRegion(255,165,255,   270,45, -95,-153,-55,    degrees);
 	}
 	else if (isRegion8){ // purple
 		bg = calculateColorForRegion(160,0,200,   315,45, -160,0,55,    degrees);
@@ -303,6 +303,8 @@ bool inDeadzone(int joy_x, int joy_y){
 	return false;
 }
 
+
+
 bool joyMovementNegligable(int joy_x, int joy_y, int old_x, int old_y, int tolerance){
 	double distance = sqrt(pow(joy_x-old_x, 2) + pow(joy_y-old_y, 2));
 	if (distance < tolerance){
@@ -312,4 +314,23 @@ bool joyMovementNegligable(int joy_x, int joy_y, int old_x, int old_y, int toler
 		return false;
 	}
 }
+
+
+
+
+
+
+
+
+
+int countUpToSixty(int x){
+	x++;
+	if (x >59){
+		return 0;
+	}
+	return x;
+}
+
+
+
 

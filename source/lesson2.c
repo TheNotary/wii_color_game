@@ -10,6 +10,7 @@
 #include <malloc.h>
 #include <math.h>
 #include <gccore.h>
+#include <time.h>
 #include <wiiuse/wpad.h>
 #include <../include/functions.h>
  
@@ -33,7 +34,11 @@ int joy_y;
 int old_x;  // for deadzone detection
 int old_y;  
 
+int my_timer = 0;
+int frame_counter = 0;
 
+
+int randTimeTillFlicker = 10;
 
 
 void initialize() {
@@ -45,7 +50,7 @@ void initialize() {
 	Mtx44 perspective;
 
 	
-	background = (GXColor){0, 0xff, 0, 0xff};
+	background = (GXColor){0, 0x0, 0, 0xff};
 
 
 	// init the vi.
@@ -124,6 +129,8 @@ void initialize() {
     f32 h = rmode->viHeight;
 	guPerspective(perspective, 45, (f32)w/h, 0.1F, 300.0F);
 	GX_LoadProjectionMtx(perspective, GX_PERSPECTIVE);
+	
+	srand(time(NULL));  // seed random number system based on sys time...
 }
 
 
@@ -160,8 +167,22 @@ void changeColorBasedOnJoystick(){
 	joy_x = data.nunchuk.js.pos.x - 128;
 	joy_y = data.nunchuk.js.pos.y - 128;
 	
+	
+	
 	int tolerance = 10;
 	if (joyMovementNegligable(joy_x, joy_y, old_x, old_y, tolerance) && inDeadzone(joy_x, joy_y)){ // if we're in the deadzone, ignore movement up to 10...
+		if (frame_counter == 0){// every second... count up
+			my_timer++;
+			
+			if (my_timer > randTimeTillFlicker){
+				//flickerTheScreenToGetChildsAttentionAgain();
+				printf("FLICKER");
+				my_timer = 0;
+				// reset random time till flickering when idle...
+				double randNum = (double)rand()/(double)RAND_MAX;
+				randTimeTillFlicker = (randNum * 10) + 10;
+			}
+		}
 		return;
 	}
 	old_x = joy_x;
@@ -179,9 +200,7 @@ void changeColorBasedOnJoystick(){
 	//int count = 60;
 	//while(count--) VIDEO_WaitVSync();
 	
-	
 	//if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
-	
 	
 	double degrees;
 	degrees = convertJoyToDegrees(joy_x, joy_y);
@@ -210,18 +229,20 @@ int main( int argc, char **argv )
     console_init(frameBuffer[fb],20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
 	
 	while(1) {
+		frame_counter = countUpToSixty(frame_counter);
 		WPAD_ScanPads();
 		
 		int buttons = WPAD_ButtonsDown(0);
 
 		if (buttons) {
 			if (buttons & WPAD_BUTTON_HOME) exit(0);
-			
-			changeColorBasedOnButtons(buttons);
+			//changeColorBasedOnButtons(buttons);
 			
 			//char buf[255];
 			//byte_to_binary(buf, buttons);
 		}
+		
+		
 		
 		
 		changeColorBasedOnJoystick();
