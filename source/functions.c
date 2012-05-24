@@ -171,11 +171,23 @@ GXColor calculateColorForRegion(int red, int green, int blue,
 }
 
 
+double rotateDegreesBy(double degrees, double rotation){
+	double result = degrees + rotation;
+	if (result > 360.0){
+		return result - 360.0;
+	}
+	else{
+		return result;
+	}
+}
+
 
 
 // the color wheel has 12 base colors, and this code allows the joystick to be mapped to 
 // some gradient between those colors or one of those base colors themselves
 GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
+	// Rotate degrees so yellow is the color on top (most intuitive)
+	degrees = rotateDegreesBy(degrees, 120.0);
 	static GXColor bg;
 	
 	// From solid blue to a blue green... 30 degrees... special case
@@ -239,116 +251,6 @@ bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y)
 
 
 
-
-void RGBToHSV(unsigned char cr, unsigned char cg, unsigned char cb,double *ph,double *ps,double *pv)
-{
-	double r,g,b;
-	double max, min, delta;
-
-	/* convert RGB to [0,1] */
-
-	r = (double)cr/255.0f;
-	g = (double)cg/255.0f;
-	b = (double)cb/255.0f;
-
-	max = max(r,(max(g,b)));
-	min = min(r,(min(g,b)));
-
-	pv[0] = max;
-
-	/* Calculate saturation */
-
-	if (max != 0.0)
-			ps[0] = (max-min)/max;
-	else
-			ps[0] = 0.0; 
-
-	if (ps[0] == 0.0)
-	{
-			ph[0] = 0.0f;   //UNDEFINED;
-			return;
-	}
-	/* chromatic case: Saturation is not 0, so determine hue */
-	delta = max-min;
-
-	if (r==max)
-	{
-			ph[0] = (g-b)/delta;
-	}
-	else if (g==max)
-	{
-			ph[0] = 2.0 + (b-r)/delta;
-	}
-	else if (b==max)
-	{
-			ph[0] = 4.0 + (r-g)/delta;
-	}
-	ph[0] = ph[0] * 60.0;
-	if (ph[0] < 0.0)
-        ph[0] += 360.0;
-}
-
-void HSVToRGB(double h,double s,double v,unsigned char *pr,unsigned char *pg,unsigned char *pb)
-{
-	int i;
-	double f, p, q, t;
-	double r,g,b;
-
-	if( s == 0 )
-	{
-			// achromatic (grey)
-			r = g = b = v;
-	}
-	else
-	{
-			h /= 60;                        // sector 0 to 5
-			i = (int)floor( h );
-			f = h - i;                      // factorial part of h
-			p = v * ( 1 - s );
-			q = v * ( 1 - s * f );
-			t = v * ( 1 - s * ( 1 - f ) );
-			switch( i )
-			{
-			case 0:
-					r = v;
-					g = t;
-					b = p;
-			break;
-			case 1:
-					r = q;
-					g = v;
-					b = p;
-			break;
-			case 2:
-					r = p;
-					g = v;
-					b = t;
-			break;
-			case 3:
-					r = p;
-					g = q;
-					b = v;
-			break;
-			case 4:
-					r = t;
-					g = p;
-					b = v;
-			break;
-			default:                // case 5:
-					r = v;
-					g = p;
-					b = q;
-			break;
-			}
-	}
-	r*=255;
-	g*=255;
-	b*=255;
-
-	pr[0]=(unsigned char)r;
-	pg[0]=(unsigned char)g;
-	pb[0]=(unsigned char)b;
-}
 
 
 
