@@ -178,17 +178,15 @@ void changeColorBasedOnJoystick(){
 		degrees = convertJoyToDegrees(joy_x, joy_y);
 		
 		if (degrees != -1){
-			GXColor careful_bg1;
-			//careful_bg1 = malloc(255);
+			GXColor *careful_bg1;
+			careful_bg1 = malloc(30 * sizeof(GXColor));
 			
-			careful_bg1 = setBackgroundBasedOnDegrees(background, degrees);
-			background = careful_bg1;
-			GXColor careful_bg2;
-			careful_bg2 = darkenBackgroundBasedOnDistance(background, joy_x, joy_y);
-			background = careful_bg2;
+			*careful_bg1 = setBackgroundBasedOnDegrees(background, degrees);
+			*careful_bg1 = darkenBackgroundBasedOnDistance(*careful_bg1, joy_x, joy_y);
+			background = *careful_bg1;
 			GX_SetCopyClear(background, 0x00ffffff);
 			
-			//free(careful_bg1);
+			free(careful_bg1);
 		}
 	}
 	
@@ -221,6 +219,8 @@ int main( int argc, char **argv )
 		changeColorBasedOnJoystick();
 		
 		fb ^= 1;		// flip framebuffer
+		
+		
 		//GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
 		//GX_SetColorUpdate(GX_TRUE);
 		GX_CopyDisp(frameBuffer[fb],GX_TRUE);
