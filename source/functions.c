@@ -187,36 +187,47 @@ double rotateDegreesBy(double degrees, double rotation){
 // some gradient between those colors or one of those base colors themselves
 GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 	// Rotate degrees so yellow is the color on top (most intuitive)
-	degrees = rotateDegreesBy(degrees, 120.0);
+	//degrees = rotateDegreesBy(degrees, 120.0);
 	static GXColor bg;
 	
 	// From solid blue to a blue green... 30 degrees... special case
 	// base is (0,0,ff) -> (0,ff,7f)
 	// refer to:  http://processingjs.org/learning/basic/colorwheel/
-	bool isRegion1 = (degrees >= 0 && degrees < 30);
-	bool isRegion2 = (degrees >= 30 && degrees < 60);   // blue-green to green 30deg
-	bool isRegion3 = (degrees >= 60 && degrees < 120);  // green to yellow 60deg
-	bool isRegion4 = (degrees >= 120 && degrees < 240); // from yellow all the way to red... in picture
-	bool isRegion5 = (degrees >= 240 && degrees < 300);
-	bool isRegion6 = (degrees >= 300 && degrees < 360);
+	bool isRegion1 = (degrees >= 0   && degrees < 45);
+	bool isRegion2 = (degrees >= 45  && degrees < 90);   // blue-green to green 30deg
+	bool isRegion3 = (degrees >= 90  && degrees < 135);  // green to yellow 60deg
+	bool isRegion4 = (degrees >= 135 && degrees < 180); // from yellow all the way to red... in picture
+	bool isRegion5 = (degrees >= 180 && degrees < 225); // pink
+	bool isRegion6 = (degrees >= 225 && degrees < 270); // this micro region is to emphasize the color purple... it's hacked in post v0.0
+	bool isRegion7 = (degrees >= 270 && degrees < 315);
+	bool isRegion8 = (degrees >= 315 && degrees < 360);
+	// at 270 we want pink
+	// at 315 we want purple
 	
-	if (isRegion1){
-		bg = calculateColorForRegion(0,0,255,0,30,0,225,0,degrees);
+	
+	if (isRegion1){  // blue
+		bg = calculateColorForRegion(0,0,255,     0,45,  0,225,-255,   degrees);
 	}
-	else if (isRegion2){
-		bg = calculateColorForRegion(0,225,255,30,30,0,30,-255,degrees);
+	else if (isRegion2){ // green
+		bg = calculateColorForRegion(0,225,0,     45,45,   127,0,0,    degrees);
 	}
-	else if (isRegion3){
-		bg = calculateColorForRegion(0,255,0,60,60,255,0,0,degrees);
+	else if (isRegion3){ // green-yellow...
+		bg = calculateColorForRegion(127,255,0,   90,45,   128,0,0,    degrees);
 	}
-	else if (isRegion4){
-		bg = calculateColorForRegion(255, 255, 0, 120, 120, 0, -255, 0, degrees); 
+	else if (isRegion4){ // yellow
+		bg = calculateColorForRegion(255,255,0,   135,45,  0,-128,0,   degrees); 
 	}
-	else if (isRegion5){
-		bg = calculateColorForRegion(255,0,0,240,60,0,0,255,degrees);
+	else if (isRegion5){ // orange
+		bg = calculateColorForRegion(255,127,0,   180,45,  0,-127,0,   degrees);
 	}
-	else if (isRegion6){
-		bg = calculateColorForRegion(255,0,255,300,60, -255,0,0,degrees);
+	else if (isRegion6){ // red
+		bg = calculateColorForRegion(255,0,0,     225,45,  0,153,255,    degrees);
+	}
+	else if (isRegion7){ // pink
+		bg = calculateColorForRegion(255,153,255,   270,45, -95,-153,-55,    degrees);
+	}
+	else if (isRegion8){
+		bg = calculateColorForRegion(160,0,200,   315,45, -160,0,55,    degrees);
 	}
 	
 	background = bg;
