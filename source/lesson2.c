@@ -160,8 +160,19 @@ void changeColorBasedOnJoystick(){
 	joy_x = data.nunchuk.js.pos.x - 128;
 	joy_y = data.nunchuk.js.pos.y - 128;
 	
-	if (inDeadzone(joy_x, joy_y))
+	int tolerance = 10;
+	if (joyMovementNegligable(joy_x, joy_y, old_x, old_y, tolerance) && inDeadzone(joy_x, joy_y)){ // if we're in the deadzone, ignore movement up to 10...
 		return;
+	}
+	old_x = joy_x;
+	old_y = joy_y;
+	
+	
+	if (inDeadzone(joy_x, joy_y)){
+		background = (GXColor){0,0,0,0xff};
+		GX_SetCopyClear(background, 0x00ffffff);
+		return;
+	}
 	
 	
 	//printf("Joy:  %d, %d  ", joy_x, joy_y);
@@ -170,24 +181,21 @@ void changeColorBasedOnJoystick(){
 	
 	
 	//if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
-	if (true){
-		old_x = joy_x;
-		old_y = joy_y;
+	
+	
+	double degrees;
+	degrees = convertJoyToDegrees(joy_x, joy_y);
+	
+	if (degrees != -1){
+		GXColor *careful_bg1;
+		careful_bg1 = malloc(30 * sizeof(GXColor));
 		
-		double degrees;
-		degrees = convertJoyToDegrees(joy_x, joy_y);
+		*careful_bg1 = setBackgroundBasedOnDegrees(background, degrees);
+		*careful_bg1 = darkenBackgroundBasedOnDistance(*careful_bg1, joy_x, joy_y);
+		background = *careful_bg1;
+		GX_SetCopyClear(background, 0x00ffffff);
 		
-		if (degrees != -1){
-			GXColor *careful_bg1;
-			careful_bg1 = malloc(30 * sizeof(GXColor));
-			
-			*careful_bg1 = setBackgroundBasedOnDegrees(background, degrees);
-			*careful_bg1 = darkenBackgroundBasedOnDistance(*careful_bg1, joy_x, joy_y);
-			background = *careful_bg1;
-			GX_SetCopyClear(background, 0x00ffffff);
-			
-			free(careful_bg1);
-		}
+		free(careful_bg1);
 	}
 	
 }

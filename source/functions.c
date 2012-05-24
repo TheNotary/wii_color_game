@@ -206,27 +206,27 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 	
 	
 	if (isRegion1){  // blue
-		bg = calculateColorForRegion(0,0,255,     0,45,  0,225,-255,   degrees);
+		bg = calculateColorForRegion(0,0,255,     0,45,     0,225,-255,   degrees);
 	}
 	else if (isRegion2){ // green
-		bg = calculateColorForRegion(0,225,0,     45,45,   127,0,0,    degrees);
+		bg = calculateColorForRegion(0,225,0,     45,45,    255,0,0,    degrees);
 	}
-	else if (isRegion3){ // green-yellow...
-		bg = calculateColorForRegion(127,255,0,   90,45,   128,0,0,    degrees);
+	else if (isRegion3){ // yellow
+		bg = calculateColorForRegion(255,255,0,   90,45,    0,-128,0,   degrees); 
 	}
-	else if (isRegion4){ // yellow
-		bg = calculateColorForRegion(255,255,0,   135,45,  0,-128,0,   degrees); 
+	else if (isRegion4){ // orange
+		bg = calculateColorForRegion(255,127,0,   135,45,   0,-127,0,   degrees);
 	}
-	else if (isRegion5){ // orange
-		bg = calculateColorForRegion(255,127,0,   180,45,  0,-127,0,   degrees);
+	else if (isRegion5){ // red
+		bg = calculateColorForRegion(255,0,0,     180,45,   0,165,153,    degrees);
 	}
-	else if (isRegion6){ // red
-		bg = calculateColorForRegion(255,0,0,     225,45,  0,153,255,    degrees);
+	else if (isRegion6){ // pink-sammon
+		bg = calculateColorForRegion(255,165,153,   225,45, 0,-12,102,    degrees);
 	}
 	else if (isRegion7){ // pink
 		bg = calculateColorForRegion(255,153,255,   270,45, -95,-153,-55,    degrees);
 	}
-	else if (isRegion8){
+	else if (isRegion8){ // purple
 		bg = calculateColorForRegion(160,0,200,   315,45, -160,0,55,    degrees);
 	}
 	
@@ -301,5 +301,15 @@ bool inDeadzone(int joy_x, int joy_y){
 	if (abs(joy_x) < 10 && abs(joy_y) < 10)
 		return true;
 	return false;
+}
+
+bool joyMovementNegligable(int joy_x, int joy_y, int old_x, int old_y, int tolerance){
+	double distance = sqrt(pow(joy_x-old_x, 2) + pow(joy_y-old_y, 2));
+	if (distance < tolerance){
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 
