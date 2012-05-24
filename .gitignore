@@ -1,3 +1,7 @@
 *.dol
 *.elf
 *.o
+*.d
+build/*.*
+*.elf.map
+
