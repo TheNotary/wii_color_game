@@ -164,9 +164,9 @@ void changeColorBasedOnJoystick(){
 		return;
 	
 	
-	printf("Joy:  %d, %d  ", joy_x, joy_y);
-	int count = 60;
-	while(count--) VIDEO_WaitVSync();
+	//printf("Joy:  %d, %d  ", joy_x, joy_y);
+	//int count = 60;
+	//while(count--) VIDEO_WaitVSync();
 	
 	
 	//if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
@@ -179,7 +179,7 @@ void changeColorBasedOnJoystick(){
 		
 		if (degrees != -1){
 			background = setBackgroundBasedOnDegrees(background, degrees);
-			//background = darkenBackgroundBasedOnDistance(background, joy_x, joy_y);
+			background = darkenBackgroundBasedOnDistance(background, joy_x, joy_y);
 			GX_SetCopyClear(background, 0x00ffffff);
 		}
 	}

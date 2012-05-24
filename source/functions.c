@@ -14,8 +14,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-
-
+#ifndef DISTANCE_CAP
+#define DISTANCE_CAP 85
+#endif
 
 
 // used by Byte_to_binary
@@ -218,6 +219,13 @@ int abs(int x){
 	return x;
 }
 
+double abs_d(double x){
+	if(x < 0.0){
+		return -x;
+	}
+	return x;
+}
+
 
 bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y)
 {
@@ -346,23 +354,26 @@ void HSVToRGB(double h,double s,double v,unsigned char *pr,unsigned char *pg,uns
 
 double getDistanceOfJoystickFromOrigin(int joy_x, int joy_y){
 	double result = sqrt(pow(joy_x, 2) + pow(joy_y, 2));
-	if (result > 127){
-		return 127;
+	if (result > DISTANCE_CAP){
+		return DISTANCE_CAP;
 	}
 	return result;
 }
 
 
 GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y){
+	
 	double dist = getDistanceOfJoystickFromOrigin(joy_x, joy_y);
-	double darknessMult = abs((int)(dist/127));
+	double darknessMult = abs_d((dist/DISTANCE_CAP));
 	
 	
 	//printf(" ");
 	//int calc = (int)(background.r * darknessMult);
-	printf("Joy:  %d, %d  ", joy_x, joy_y);
-	int count = 60;
-	while(count--) VIDEO_WaitVSync();
+	//printf("Joy:  %d, %d  ", joy_x, joy_y);
+	//printf("dinstance:  %f   ", dist);
+	//printf("Darkness Mult:  %f   ", darknessMult);
+	//int count = 60;
+	//while(count--) VIDEO_WaitVSync();
 	
 	
 	background = (GXColor){(int)(background.r * darknessMult), 
