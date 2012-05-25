@@ -288,7 +288,9 @@ double getDistanceOfJoystickFromOrigin(int joy_x, int joy_y){
 }
 
 
-GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y){
+GXColor darkenBackgroundBasedOnDistance(GXColor background, joystick_t joy_data){
+	int joy_x = joy_data.pos.x - joy_data.center.x;
+	int joy_y = joy_data.pos.y - joy_data.center.y;
 	double dist = getDistanceOfJoystickFromOrigin(joy_x, joy_y);
 	double darknessMult = abs_d((dist/DISTANCE_CAP));
 	

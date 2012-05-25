@@ -36,13 +36,14 @@ int old_y;
 
 int my_timer = 0;
 int frame_counter = 0;
+bool areFlickering = false;
 
 
 int randTimeTillFlicker = 10;
 
 int gameMode = 0;  // 0 is menu...  change this to enum when I have a second mode...
 
-
+double oldDegrees = -1;
 
 Mtx view;
 Mtx44 perspective;
@@ -174,18 +175,35 @@ void changeColorBasedOnButtons(int buttons){
 }
 
 
+//flickerTheScreenToGetChildsAttentionAgain();
 void flickerRoutine(){
 	if (frame_counter == 0){// every second... count up
 		my_timer++;
 		
 		if (my_timer > randTimeTillFlicker){
-			//flickerTheScreenToGetChildsAttentionAgain();
-			printf("FLICKER");
+			
+			
+			//printf("FLICKER");
+			areFlickering = true;
+			background = (GXColor){0x255 & rand(), 0x255 & rand(), 0x255 & rand(), 0xff};
+			GX_SetCopyClear(background, 0x00ffffff);
+			
 			my_timer = 0;
 			// reset random time till flickering when idle...
 			double randNum = (double)rand()/(double)RAND_MAX;
-			randTimeTillFlicker = (randNum * 10) + 20;
+			randTimeTillFlicker = (randNum * 10) + 2;
 		}
+		
+		if (areFlickering){
+			// 50% chance to return to non-flicker status... alows for variable length flickering
+			if ((rand() & 1) == 1){
+				// end the flickering event
+				background = (GXColor){0,0,0, 0xff};
+				GX_SetCopyClear(background, 0x00ffffff);
+				areFlickering = false;
+			}
+		}
+		
 	}
 }
 
@@ -193,16 +211,16 @@ void changeColorBasedOnJoystick(){
 	struct expansion_t data;
 	WPAD_Expansion(WPAD_CHAN_0, &data); // Get expansion info from the first wiimote
 	
-	joy_x = data.nunchuk.js.pos.x - 128;
-	joy_y = data.nunchuk.js.pos.y - 128;
-	
 	joystick_t joy_data = data.nunchuk.js;
 	
+	
+	joy_x = data.nunchuk.js.pos.x - data.nunchuk.js.center.x;
+	joy_y = data.nunchuk.js.pos.y - data.nunchuk.js.center.y;
 	
 	
 	//printf("minimum X, Y:  %d, %d   C:  %d", data.nunchuk.js.min.x, data.nunchuk.js.min.y, data.nunchuk.js.center.x);
 	//printf("Center X, Y:  %d, %d  DIST: %d", data.nunchuk.js.center.x, data.nunchuk.js.center.y, (int)getDistanceOfJoystickFromCenter(joy_data));
-	int count = 60;
+	//int count = 60;
 	//while (count--) VIDEO_WaitVSync();
 	
 	int tolerance = 10;
@@ -223,25 +241,30 @@ void changeColorBasedOnJoystick(){
 	}
 	
 	
-	//printf("Joy:  %d, %d  ", joy_x, joy_y);
+	//printf("Maxes:  %d, %d  ", joy_data.max.x, joy_data.max.y);
 	//int count = 60;
 	//while(count--) VIDEO_WaitVSync();
 	
-	//if (deadZoneClearance(joy_x, joy_y, old_x, old_y)){
-	
 	double degrees;
 	degrees = convertJoyToDegrees(joy_x, joy_y);
+	
+	if(oldDegrees - degrees > 40){            // about this code:  Sometimes, at the begining of the game, the screen will flash to red for 1/60hz... this is annoying.  It's always the same red too I think.  I found out it was the actual joystick getting picked up as being down there... To resolve the problem, the player can swivel the joystick 360 degrees and the flickering usually stops
+		printf("SPIKE DETECTED %f ", degrees); // I'm not 100% sure what the nature of this bug is, but perhaps it's registering (0,0) as it's values...  but it can't, it's minimums are well above that... 
+	}                                         // I think just having this code here is lucky though... cause I don't get flickering anymore...
 	
 	if (degrees != -1){
 		GXColor *careful_bg1;
 		careful_bg1 = malloc(30 * sizeof(GXColor));
 		
+		
+		
 		*careful_bg1 = setBackgroundBasedOnDegrees(background, degrees);
-		*careful_bg1 = darkenBackgroundBasedOnDistance(*careful_bg1, joy_x, joy_y);
+		*careful_bg1 = darkenBackgroundBasedOnDistance(*careful_bg1, joy_data);
 		background = *careful_bg1;
 		GX_SetCopyClear(background, 0x00ffffff);
 		
 		free(careful_bg1);
+		oldDegrees = degrees;
 	}
 }
 
