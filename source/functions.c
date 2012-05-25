@@ -311,8 +311,8 @@ GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y
 
 
 
-bool inDeadzone(int joy_x, int joy_y){
-	if (abs(joy_x) < 10 && abs(joy_y) < 10)
+bool inDeadzone(joystick_t joy_data){
+	if (abs(joy_data.pos.x - joy_data.center.x) < 10 && abs(joy_data.pos.y - joy_data.center.y) < 10)
 		return true;
 	return false;
 }

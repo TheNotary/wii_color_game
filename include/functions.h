@@ -16,7 +16,7 @@ bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y);
 GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y);
 
 
-bool inDeadzone(int joy_x, int joy_y);
+bool inDeadzone(joystick_t joy_data);
 bool joyMovementNegligable(int joy_x, int joy_y, int old_x, int old_y, int tolerance);
 int countUpToSixty(int x);
 

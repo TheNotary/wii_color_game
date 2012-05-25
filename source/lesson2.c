@@ -206,7 +206,7 @@ void changeColorBasedOnJoystick(){
 	//while (count--) VIDEO_WaitVSync();
 	
 	int tolerance = 10;
-	if (joyMovementNegligable(joy_x, joy_y, old_x, old_y, tolerance) && inDeadzone(joy_x, joy_y)){ // if we're in the deadzone, ignore movement up to 10...
+	if (joyMovementNegligable(joy_x, joy_y, old_x, old_y, tolerance) && inDeadzone(joy_data)){ // if we're in the deadzone, ignore movement up to 10...
 		
 		flickerRoutine();
 		
@@ -216,7 +216,7 @@ void changeColorBasedOnJoystick(){
 	old_y = joy_y;
 	
 	
-	if (inDeadzone(joy_x, joy_y)){
+	if (inDeadzone(joy_data)){
 		background = (GXColor){0,0,0,0xff};
 		GX_SetCopyClear(background, 0x00ffffff);
 		return;
@@ -345,8 +345,6 @@ int main( int argc, char **argv )
 		mySprite.image = 0;
 		
 		
-		
-		
 		prepairForSeriousDrawing();
 		
 		//drawSpriteTex( mySprite.x >> 8, mySprite.y >> 8, 32, 32, mySprite.image);
@@ -378,10 +376,7 @@ int main( int argc, char **argv )
 				break;
 		}
 		
-		
-		
 		fb ^= 1;		// flip framebuffer
-		
 		
 		
 		GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
