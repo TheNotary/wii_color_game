@@ -1,5 +1,7 @@
 #include <string.h>
 #include <stdio.h>
+#include <wiiuse/wpad.h>
+
 #include <math.h>
 	#define max( a, b ) ( ((a) > (b)) ? (a) : (b) )
 
@@ -267,7 +269,13 @@ bool deadZoneClearance(int joy_x, int joy_y, int old_x, int old_y)
 
 
 
-
+double getDistanceOfJoystickFromCenter(joystick_t joy_data){
+	double result = sqrt(pow(joy_data.pos.x-joy_data.center.x, 2) + pow(joy_data.pos.y-joy_data.center.y, 2));
+	if (result > DISTANCE_CAP){
+		return DISTANCE_CAP;
+	}
+	return result;
+}
 
 
 

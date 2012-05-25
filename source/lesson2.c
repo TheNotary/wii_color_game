@@ -196,7 +196,14 @@ void changeColorBasedOnJoystick(){
 	joy_x = data.nunchuk.js.pos.x - 128;
 	joy_y = data.nunchuk.js.pos.y - 128;
 	
+	joystick_t joy_data = data.nunchuk.js;
 	
+	
+	
+	//printf("minimum X, Y:  %d, %d   C:  %d", data.nunchuk.js.min.x, data.nunchuk.js.min.y, data.nunchuk.js.center.x);
+	//printf("Center X, Y:  %d, %d  DIST: %d", data.nunchuk.js.center.x, data.nunchuk.js.center.y, (int)getDistanceOfJoystickFromCenter(joy_data));
+	int count = 60;
+	//while (count--) VIDEO_WaitVSync();
 	
 	int tolerance = 10;
 	if (joyMovementNegligable(joy_x, joy_y, old_x, old_y, tolerance) && inDeadzone(joy_x, joy_y)){ // if we're in the deadzone, ignore movement up to 10...
@@ -342,7 +349,7 @@ int main( int argc, char **argv )
 		
 		prepairForSeriousDrawing();
 		
-		drawSpriteTex( mySprite.x >> 8, mySprite.y >> 8, 32, 32, mySprite.image);
+		//drawSpriteTex( mySprite.x >> 8, mySprite.y >> 8, 32, 32, mySprite.image);
 		
 		// do this stuff after drawing
 		GX_DrawDone();
