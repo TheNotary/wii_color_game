@@ -19,4 +19,6 @@ GXColor darkenBackgroundBasedOnDistance(GXColor background, int joy_x, int joy_y
 bool inDeadzone(int joy_x, int joy_y);
 bool joyMovementNegligable(int joy_x, int joy_y, int old_x, int old_y, int tolerance);
 int countUpToSixty(int x);
+
+//void drawSpriteTex( int x, int y, int width, int height, int image );
 #endif

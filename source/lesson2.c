@@ -40,15 +40,28 @@ int frame_counter = 0;
 
 int randTimeTillFlicker = 10;
 
+int gameMode = 0;  // 0 is menu...  change this to enum when I have a second mode...
+
+
+
+Mtx view;
+Mtx44 perspective;
+Mtx model, modelview;
+
+//simple sprite struct
+typedef struct {
+	int x,y;			// screen co-ordinates 
+	int dx, dy;			// velocity
+	int image;
+}Sprite;
+
 
 void initialize() {
 	f32 yscale;
 
 	u32 xfbHeight;
 
-	Mtx view;
-	Mtx44 perspective;
-
+	
 	
 	background = (GXColor){0, 0x0, 0, 0xff};
 
@@ -160,6 +173,22 @@ void changeColorBasedOnButtons(int buttons){
 	GX_SetCopyClear(background, 0x00ffffff);
 }
 
+
+void flickerRoutine(){
+	if (frame_counter == 0){// every second... count up
+		my_timer++;
+		
+		if (my_timer > randTimeTillFlicker){
+			//flickerTheScreenToGetChildsAttentionAgain();
+			printf("FLICKER");
+			my_timer = 0;
+			// reset random time till flickering when idle...
+			double randNum = (double)rand()/(double)RAND_MAX;
+			randTimeTillFlicker = (randNum * 10) + 20;
+		}
+	}
+}
+
 void changeColorBasedOnJoystick(){
 	struct expansion_t data;
 	WPAD_Expansion(WPAD_CHAN_0, &data); // Get expansion info from the first wiimote
@@ -171,18 +200,9 @@ void changeColorBasedOnJoystick(){
 	
 	int tolerance = 10;
 	if (joyMovementNegligable(joy_x, joy_y, old_x, old_y, tolerance) && inDeadzone(joy_x, joy_y)){ // if we're in the deadzone, ignore movement up to 10...
-		if (frame_counter == 0){// every second... count up
-			my_timer++;
-			
-			if (my_timer > randTimeTillFlicker){
-				//flickerTheScreenToGetChildsAttentionAgain();
-				printf("FLICKER");
-				my_timer = 0;
-				// reset random time till flickering when idle...
-				double randNum = (double)rand()/(double)RAND_MAX;
-				randTimeTillFlicker = (randNum * 10) + 10;
-			}
-		}
+		
+		flickerRoutine();
+		
 		return;
 	}
 	old_x = joy_x;
@@ -216,8 +236,78 @@ void changeColorBasedOnJoystick(){
 		
 		free(careful_bg1);
 	}
+}
+
+
+
+void showTheTitleScreen(){
+	
 	
 }
+
+void prepairForSeriousDrawing(){
+	// do this before drawing
+	GX_SetViewport(0,0,rmode->fbWidth,rmode->efbHeight,0,1);
+
+	guMtxIdentity(model);
+	guMtxTransApply(model, model, -1.5f,0.0f,-6.0f);
+	guMtxConcat(view,model,modelview);
+	// load the modelview matrix into matrix memory
+	GX_LoadPosMtxImm(modelview, GX_PNMTX0);
+}
+
+void drawAGoofyWhiteTriangle(){
+	GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 3);
+		GX_Position3f32( 0.0f, 1.0f, 0.0f);		// Top
+		GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
+		GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
+	GX_End();
+}
+
+
+
+//---------------------------------------------------------------------------------
+// Texture co-ordinates for ball sprites
+//---------------------------------------------------------------------------------
+float texCoords[] = {
+//---------------------------------------------------------------------------------
+	0.0 ,0.0 , 0.5, 0.0, 0.5, 0.5, 0.0, 0.5,  // BALL 1
+	0.5 ,0.0 , 1.0, 0.0, 1.0, 0.5, 0.5, 0.5,  // BALL 2
+	0.0 ,0.5 , 0.5, 0.5, 0.5, 1.0, 0.0, 1.0,  // BALL 3
+	0.5 ,0.5 , 1.0, 0.5, 1.0, 1.0, 0.5, 1.0   // BALL 4
+};
+
+
+void drawSpriteTex( int x, int y, int width, int height, int image ) {
+//---------------------------------------------------------------------------------
+
+	int texIndex = image * 8;      // choose which 
+	
+	printf("starting quad draw");
+	
+	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
+	printf("in quad");
+		GX_Position2f32(x, y);					// Top Left
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+		
+		texIndex+=2;
+		
+		GX_Position2f32(x+width-1, y);			// Top Right
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+		
+		texIndex+=2;
+		
+		GX_Position2f32(x+width-1,y+height-1);	// Bottom Right
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+		
+		texIndex+=2;
+		
+		GX_Position2f32(x,y+height-1);			// Bottom Left
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+	GX_End();									// Done Drawing The Quad 
+
+}
+
 
 
  //---------------------------------------------------------------------------------
@@ -237,29 +327,65 @@ int main( int argc, char **argv )
 		if (buttons) {
 			if (buttons & WPAD_BUTTON_HOME) exit(0);
 			//changeColorBasedOnButtons(buttons);
-			
-			//char buf[255];
-			//byte_to_binary(buf, buttons);
+		}
+		
+		Sprite mySprite;
+		
+		mySprite.x = 60;
+		mySprite.y = 100;
+		mySprite.dx = 1;
+		mySprite.dy = 1;
+		mySprite.image = 0;
+		
+		
+		
+		
+		prepairForSeriousDrawing();
+		
+		drawSpriteTex( mySprite.x >> 8, mySprite.y >> 8, 32, 32, mySprite.image);
+		
+		// do this stuff after drawing
+		GX_DrawDone();
+		
+		
+		
+		
+		switch(gameMode){
+			case 0:
+				// show the title screen menu
+				showTheTitleScreen();
+				gameMode = 1;
+				break;
+			case 1:
+				// play that basic color game... free play mode
+				changeColorBasedOnJoystick();
+				break;
+			case 2:
+				// play the "GO TO THE COLOR SPOKEN" game
+				break;
+			case 3:
+				// Play the number game
+				break;
+			default:
+				printf("unknown game mode!!!");
+				break;
 		}
 		
 		
 		
-		
-		changeColorBasedOnJoystick();
-		
 		fb ^= 1;		// flip framebuffer
 		
 		
-		//GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
-		//GX_SetColorUpdate(GX_TRUE);
+		
+		GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+		GX_SetColorUpdate(GX_TRUE);
 		GX_CopyDisp(frameBuffer[fb],GX_TRUE);
 
 		VIDEO_SetNextFramebuffer(frameBuffer[fb]);
 
-		//VIDEO_Flush();
+		VIDEO_Flush();
 		
 		VIDEO_WaitVSync();
-		
 	}
 	return 0;
 }

@@ -14,6 +14,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#ifndef HALF_PI
+#define HALF_PI 1.570796326794897
+#endif
+
 #ifndef DISTANCE_CAP
 #define DISTANCE_CAP 85
 #endif
@@ -162,9 +166,11 @@ GXColor calculateColorForRegion(int red, int green, int blue,
 	greenDif = 255;
 	blueDif = -127;
 	*/
-	red   += redDif   * percentageThroughRegion;
-	green += greenDif * percentageThroughRegion;
-	blue  += blueDif  * percentageThroughRegion;
+	
+	red   += redDif   * sin(percentageThroughRegion*HALF_PI); // this new equations makes it so it's easier to be "stuck" on one of the prime 8 colors...
+	green += greenDif * sin(percentageThroughRegion*HALF_PI); // degrees should be adjusted counter clockwise by 1 or 2 to make it feel more centered...
+	blue  += blueDif  * sin(percentageThroughRegion*HALF_PI); // Or a more clever algorithm should be implimented here...
+	
 	
 	bg = (GXColor){red,green,blue,0xff};
 	return bg;
@@ -334,3 +340,48 @@ int countUpToSixty(int x){
 
 
 
+/*
+
+//---------------------------------------------------------------------------------
+// Texture co-ordinates for ball sprites
+//---------------------------------------------------------------------------------
+float texCoords[] = {
+//---------------------------------------------------------------------------------
+	0.0 ,0.0 , 0.5, 0.0, 0.5, 0.5, 0.0, 0.5,  // BALL 1
+	0.5 ,0.0 , 1.0, 0.0, 1.0, 0.5, 0.5, 0.5,  // BALL 2
+	0.0 ,0.5 , 0.5, 0.5, 0.5, 1.0, 0.0, 1.0,  // BALL 3
+	0.5 ,0.5 , 1.0, 0.5, 1.0, 1.0, 0.5, 1.0   // BALL 4
+};
+
+
+//---------------------------------------------------------------------------------
+void drawSpriteTex( int x, int y, int width, int height, int image ) {
+//---------------------------------------------------------------------------------
+
+	int texIndex = image * 8;      // choose which 
+	
+	printf("starting quad draw");
+	
+	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
+	printf("in quad");
+		GX_Position2f32(x, y);					// Top Left
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+		
+		texIndex+=2;
+		
+		GX_Position2f32(x+width-1, y);			// Top Right
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+		
+		texIndex+=2;
+		
+		GX_Position2f32(x+width-1,y+height-1);	// Bottom Right
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+		
+		texIndex+=2;
+		
+		GX_Position2f32(x,y+height-1);			// Bottom Left
+		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
+	GX_End();									// Done Drawing The Quad 
+
+}
+*/
