@@ -349,49 +349,50 @@ int countUpToSixty(int x){
 
 
 
-
-/*
-
-//---------------------------------------------------------------------------------
-// Texture co-ordinates for ball sprites
-//---------------------------------------------------------------------------------
-float texCoords[] = {
-//---------------------------------------------------------------------------------
-	0.0 ,0.0 , 0.5, 0.0, 0.5, 0.5, 0.0, 0.5,  // BALL 1
-	0.5 ,0.0 , 1.0, 0.0, 1.0, 0.5, 0.5, 0.5,  // BALL 2
-	0.0 ,0.5 , 0.5, 0.5, 0.5, 1.0, 0.0, 1.0,  // BALL 3
-	0.5 ,0.5 , 1.0, 0.5, 1.0, 1.0, 0.5, 1.0   // BALL 4
-};
-
-
-//---------------------------------------------------------------------------------
-void drawSpriteTex( int x, int y, int width, int height, int image ) {
-//---------------------------------------------------------------------------------
-
-	int texIndex = image * 8;      // choose which 
+char* getNameOfColorFromDegrees(double degrees, char* color){
+	degrees = degrees + 15.0; // offset degrees so it's centered...  
+	if (degrees > 360.0)
+		degrees = degrees - 360.0;
+		
+	bool isRegion1 = (degrees >= 0   && degrees < 45);  // blue
+	bool isRegion2 = (degrees >= 45  && degrees < 90);  // green
+	bool isRegion3 = (degrees >= 90  && degrees < 135); // yellow
+	bool isRegion4 = (degrees >= 135 && degrees < 180); // orange
+	bool isRegion5 = (degrees >= 180 && degrees < 225); // red
+	bool isRegion6 = (degrees >= 225 && degrees < 270); // salmon
+	bool isRegion7 = (degrees >= 270 && degrees < 315); // pink
+	bool isRegion8 = (degrees >= 315 && degrees < 360); // violet
 	
-	printf("starting quad draw");
+	strcpy(color, "Not Blue");
 	
-	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
-	printf("in quad");
-		GX_Position2f32(x, y);					// Top Left
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-		
-		texIndex+=2;
-		
-		GX_Position2f32(x+width-1, y);			// Top Right
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-		
-		texIndex+=2;
-		
-		GX_Position2f32(x+width-1,y+height-1);	// Bottom Right
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-		
-		texIndex+=2;
-		
-		GX_Position2f32(x,y+height-1);			// Bottom Left
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-	GX_End();									// Done Drawing The Quad 
-
+	if (isRegion1)
+		strcpy(color, "blue");
+	if(isRegion2)
+		strcpy(color, "green");
+	if(isRegion3)
+		strcpy(color, "yellow");
+	if(isRegion4)
+		strcpy(color, "orange");
+	if(isRegion5)
+		strcpy(color, "red");
+	if(isRegion6)
+		strcpy(color, "salmon");
+	if(isRegion7)
+		strcpy(color, "pink");
+	if(isRegion8)
+		strcpy(color, "purple");
+	
+	return color;
 }
-*/
+
+
+void printNameOfColor(double degrees){
+	printf("\x1b[2;0H");
+	
+	char color[25] = {'\0'};
+	//color = getNameOfColorFromDegrees(degrees, color);
+	strcpy(color, getNameOfColorFromDegrees(degrees, color)); //{'h', 'i', '\0' };
+	printf("%s", color);
+	//printf("BLAAAAA:  %f", degrees);
+}
+

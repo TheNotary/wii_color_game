@@ -1,7 +1,43 @@
 /*---------------------------------------------------------------------------------
 
-	nehe lesson 2 port to GX by WinterMute
+	wii Color Game
+	    (started by sktlz_plus)
 
+	The wii color game is a game intended for the 1-3 year old video gamer.  The game
+	must be played under supervision obviusly.  The baby handler (from here on refered 
+	to as handler) is presented with the challege of holding the baby and coaxing the 
+	baby to hold the nunchuck.  
+	
+	::Learning The Joystick
+	Idealy, the handler will be able to get the baby 
+	interested in what the joystick does (it changes colors on the screen).  
+	
+	::Color Shouting
+	Another method of play is to simply have the handler change the color of the screen
+	and shout out the color being displayed in excitement.  Ideally the baby will pick
+	up on the habit and will start shouting colors too!  When the baby says the wrong 
+	color, VERY soft feedback can be applied such as, "Sort of!  It's... maybe it's BLUE!"
+	
+	::Finding Colors
+	For older babies, possibly 3 year olds, it may be possible to ask the infant to use
+	the joystick to put a color on the screen.  
+	
+	
+	
+	TODO:
+	-Include a mini-map of the color wheel
+	-Make a start screen
+	-Impliment a menu
+	-When idle, a loveable colored yoshi should apear to reclaim the babies attention
+	
+	-Add a number feature based on the color game (number 1-3 fit nicely but must master the minimap part)
+	
+	-Add a play mode where the computer asks you to seek a color
+	
+	-Add a mode where the color wheel is scrambled!
+	
+	-Add a mode where the game asks "What color is the [object]" and you move the joystick to the color
+	
 ---------------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -11,6 +47,7 @@
 #include <math.h>
 #include <gccore.h>
 #include <time.h>
+#include <jpeg/jpgogc.h>
 #include <wiiuse/wpad.h>
 #include <../include/functions.h>
  
@@ -19,6 +56,7 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
 
 
 
@@ -49,23 +87,12 @@ Mtx view;
 Mtx44 perspective;
 Mtx model, modelview;
 
-//simple sprite struct
-typedef struct {
-	int x,y;			// screen co-ordinates 
-	int dx, dy;			// velocity
-	int image;
-}Sprite;
-
 
 void initialize() {
 	f32 yscale;
-
 	u32 xfbHeight;
-
-	
 	
 	background = (GXColor){0, 0x0, 0, 0xff};
-
 
 	// init the vi.
 	VIDEO_Init();
@@ -265,6 +292,8 @@ void changeColorBasedOnJoystick(){
 		
 		free(careful_bg1);
 		oldDegrees = degrees;
+		
+		printNameOfColor(degrees);
 	}
 }
 
@@ -294,49 +323,19 @@ void drawAGoofyWhiteTriangle(){
 	GX_End();
 }
 
-
-
-//---------------------------------------------------------------------------------
-// Texture co-ordinates for ball sprites
-//---------------------------------------------------------------------------------
-float texCoords[] = {
-//---------------------------------------------------------------------------------
-	0.0 ,0.0 , 0.5, 0.0, 0.5, 0.5, 0.0, 0.5,  // BALL 1
-	0.5 ,0.0 , 1.0, 0.0, 1.0, 0.5, 0.5, 0.5,  // BALL 2
-	0.0 ,0.5 , 0.5, 0.5, 0.5, 1.0, 0.0, 1.0,  // BALL 3
-	0.5 ,0.5 , 1.0, 0.5, 1.0, 1.0, 0.5, 1.0   // BALL 4
-};
-
-
-void drawSpriteTex( int x, int y, int width, int height, int image ) {
-//---------------------------------------------------------------------------------
-
-	int texIndex = image * 8;      // choose which 
-	
-	printf("starting quad draw");
-	
-	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
-	printf("in quad");
-		GX_Position2f32(x, y);					// Top Left
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-		
-		texIndex+=2;
-		
-		GX_Position2f32(x+width-1, y);			// Top Right
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-		
-		texIndex+=2;
-		
-		GX_Position2f32(x+width-1,y+height-1);	// Bottom Right
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-		
-		texIndex+=2;
-		
-		GX_Position2f32(x,y+height-1);			// Bottom Left
-		GX_TexCoord2f32(texCoords[texIndex],texCoords[texIndex+1]);
-	GX_End();									// Done Drawing The Quad 
-
+// these goofy white rectangles can have textures printed on them...
+// that's how I'm going to handle the title screen
+void drawAGoofyWhiteRectangle(){
+	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
+		GX_Position3f32( -1.0f, 0.0f, 0.0f);		// Top Left
+		GX_Position3f32( 1.0f, 0.0f, 0.0f);		// Top Right
+		GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
+		GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
+	GX_End();
 }
+
+
+
 
 
 
@@ -359,18 +358,14 @@ int main( int argc, char **argv )
 			//changeColorBasedOnButtons(buttons);
 		}
 		
-		Sprite mySprite;
-		
-		mySprite.x = 60;
-		mySprite.y = 100;
-		mySprite.dx = 1;
-		mySprite.dy = 1;
-		mySprite.image = 0;
 		
 		
 		prepairForSeriousDrawing();
 		
-		//drawSpriteTex( mySprite.x >> 8, mySprite.y >> 8, 32, 32, mySprite.image);
+		//drawAGoofyWhiteTriangle();
+		
+		drawAGoofyWhiteRectangle();
+		
 		
 		// do this stuff after drawing
 		GX_DrawDone();
