@@ -3,20 +3,32 @@
 	wii Color Game
 	    (started by sktlz_plus)
 
-	The wii color game is a game intended for the 1-3 year old video gamer.  The game
-	must be played under supervision obviusly.  The baby handler (from here on refered 
+	The wii color game is an interactive learning game intended for the 1-3 year old 
+	video gamer.  It's based on color memorization and verbal communication skill building.  
+	The game must be played under supervision.  The baby handler (from here on refered 
 	to as handler) is presented with the challege of holding the baby and coaxing the 
 	baby to hold the nunchuck.  
 	
+	[[Current play modes]]
+	
 	::Learning The Joystick
 	Idealy, the handler will be able to get the baby 
-	interested in what the joystick does (it changes colors on the screen).  
+	interested in what the joystick does (it changes colors on the screen).  It is 
+	important that the handler feign terrific excitement about what happens to the
+	screen as the baby touches the joystick (the screen color will change).  Pointing
+	at the joystick and moving the babies thumb on the joystick my help keep the baby
+	interested.  However, babies are to young to be 'goal oriented' and so the handler
+	should not be too overly concerned with how much interest the baby takes in the 
+	joystick.  
 	
 	::Color Shouting
 	Another method of play is to simply have the handler change the color of the screen
 	and shout out the color being displayed in excitement.  Ideally the baby will pick
 	up on the habit and will start shouting colors too!  When the baby says the wrong 
 	color, VERY soft feedback can be applied such as, "Sort of!  It's... maybe it's BLUE!"
+	
+	::Color Trivia
+	Simply asking "what color is that?" while pointing the joystick in one of the 8 color zones.  
 	
 	::Finding Colors
 	For older babies, possibly 3 year olds, it may be possible to ask the infant to use
