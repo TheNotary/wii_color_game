@@ -376,7 +376,7 @@ int main( int argc, char **argv )
 		
 		//drawAGoofyWhiteTriangle();
 		
-		drawAGoofyWhiteRectangle();
+		//drawAGoofyWhiteRectangle();
 		
 		
 		// do this stuff after drawing
