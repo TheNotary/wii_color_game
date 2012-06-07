@@ -206,7 +206,7 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 	bool isRegion3 = (degrees >= 90  && degrees < 135);  // green to yellow 60deg
 	bool isRegion4 = (degrees >= 135 && degrees < 180); // from yellow all the way to red... in picture
 	bool isRegion5 = (degrees >= 180 && degrees < 225); // pink
-	bool isRegion6 = (degrees >= 225 && degrees < 270); // this micro region is to emphasize the color purple... it's hacked in post v0.0
+	bool isRegion6 = (degrees >= 225 && degrees < 270); // I'm adding brown here...
 	bool isRegion7 = (degrees >= 270 && degrees < 315);
 	bool isRegion8 = (degrees >= 315 && degrees < 360);
 	// at 270 we want pink
@@ -226,10 +226,10 @@ GXColor setBackgroundBasedOnDegrees(GXColor background, double degrees){
 		bg = calculateColorForRegion(255,127,0,   135,45,   0,-127,0,   degrees);
 	}
 	else if (isRegion5){ // red
-		bg = calculateColorForRegion(255,0,0,     180,45,   0,165,153,    degrees);
+		bg = calculateColorForRegion(255,0,0,     180,45,   -102,102,51,    degrees);
 	}
-	else if (isRegion6){ // pink-sammon
-		bg = calculateColorForRegion(255,165,153,   225,45, 0,0,102,    degrees);
+	else if (isRegion6){ // brown
+		bg = calculateColorForRegion(153,102,51,   225,45, 0,0,102,    degrees);
 	}
 	else if (isRegion7){ // pink
 		bg = calculateColorForRegion(255,165,255,   270,45, -95,-153,-55,    degrees);
@@ -359,7 +359,7 @@ char* getNameOfColorFromDegrees(double degrees, char* color){
 	bool isRegion3 = (degrees >= 90  && degrees < 135); // yellow
 	bool isRegion4 = (degrees >= 135 && degrees < 180); // orange
 	bool isRegion5 = (degrees >= 180 && degrees < 225); // red
-	bool isRegion6 = (degrees >= 225 && degrees < 270); // salmon
+	bool isRegion6 = (degrees >= 225 && degrees < 270); // brown
 	bool isRegion7 = (degrees >= 270 && degrees < 315); // pink
 	bool isRegion8 = (degrees >= 315 && degrees < 360); // violet
 	
@@ -376,7 +376,7 @@ char* getNameOfColorFromDegrees(double degrees, char* color){
 	if(isRegion5)
 		strcpy(color, "red");
 	if(isRegion6)
-		strcpy(color, "salmon");
+		strcpy(color, "brown");
 	if(isRegion7)
 		strcpy(color, "pink");
 	if(isRegion8)
